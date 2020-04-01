@@ -18,8 +18,8 @@ let isSolved = false;
 let displayGame = false;
 
 function preload() {
-  splash = loadImage('data/sudokusplash.png');
-  home = loadImage('data/home.png');
+  // splash = loadImage('data/sudokusplash.png');
+  home = loadImage('data/sudokusplash.png');
   rules = loadImage('data/rules.png');
   about = loadImage('data/about.png');
   play = loadImage('data/sudokuboard.png');
