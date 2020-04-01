@@ -57,9 +57,9 @@ function draw() {
 
   // splash screen buttons (highlight pink)
   if (selectedScreen === 0) {
-    highlightButtons(mouseX, mouseY, 254, 250, 130, 37, '#ffb0c5'); // play button
-    highlightButtons(mouseX, mouseY, 228, 212, 86, 33, '#ffb0c5'); // rules button
-    highlightButtons(mouseX, mouseY, 320, 213, 92, 33, '#ffb0c5'); // about button
+    highlightButtons(mouseX, mouseY, 438, 248, 104, 37, '#ffb0c5'); // play button
+    highlightButtons(mouseX, mouseY, 460, 286, 54, 17, '#ffb0c5'); // rules button
+    highlightButtons(mouseX, mouseY, 460, 304, 53, 16, '#ffb0c5'); // about button
   }
 
   // number buttons (hightlight colour according to number)
@@ -87,7 +87,7 @@ function draw() {
 
   // rules / about screen (highlight pink)
   if (selectedScreen === 2 || selectedScreen === 3) {
-    highlightButtons(mouseX, mouseY, 473, 39, 86, 35, '#ffb0c5'); // return to splash button
+    highlightButtons(mouseX, mouseY, 452, 41, 116, 39, '#ffb0c5'); // return to splash button
   }
 
   //If statement to print congratulations message if sudoku puzzle is solved
@@ -118,16 +118,16 @@ function mouseReleased() {
   // splash screen buttons
   if (selectedScreen === 0) {
     // play button
-    if (rectHitTest(mouseX, mouseY, 254, 250, 130, 37)) {
+    if (rectHitTest(mouseX, mouseY, 438, 248, 104, 37)) {
       selectedScreen = 1;
       displayGame = true;
     };
     // rules button
-    if (rectHitTest(mouseX, mouseY, 228, 212, 86, 33)) {
+    if (rectHitTest(mouseX, mouseY, 460, 286, 54, 17)) {
       selectedScreen = 2;
     };
     // about button
-    if (rectHitTest(mouseX, mouseY, 320, 213, 92, 33)) {
+    if (rectHitTest(mouseX, mouseY, 460, 304, 53, 16)) {
       selectedScreen = 3;
     };
   }
@@ -190,7 +190,7 @@ function mouseReleased() {
   // rule / about screen
   if (selectedScreen === 2 || selectedScreen === 3) {
     // return to splash button
-    if (rectHitTest(mouseX, mouseY, 473, 39, 86, 35)) {
+    if (rectHitTest(mouseX, mouseY, 452, 41, 116, 39)) {
       selectedScreen = 0;
     }
   }
