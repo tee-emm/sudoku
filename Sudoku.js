@@ -2,20 +2,27 @@
  * Created by thomassmuir on 2019-02-12.
  */
 
-//Constant
+// constant
 let play;
 let splash;
 let home;
 let rules;
 let about; //Image variables for Canvas
 
-//Static Variables
+// state variables
 let selectedScreen = 0;
 let chosen;
 let button = "";
 let loadingFile = false;
 let isSolved = false;
 let displayGame = false;
+let generated = false;
+
+// Aarays for board generation
+let board = boardArray(); // board array that renders out on the console
+let initial = boardArray(); // initial array generation for later comparison and auto-solve
+let solved = boardArray(); // solved array of current board
+let loaded = boardArray(); // loaded array of user-loaded .sudoku file
 
 function preload() {
   // splash = loadImage('data/sudokusplash.png');
@@ -57,32 +64,32 @@ function draw() {
 
   // splash screen buttons (highlight pink)
   if (selectedScreen === 0) {
-    highlightButtons(mouseX, mouseY, 438, 248, 104, 37, '#ffb0c5'); // play button
+    highlightButtons(mouseX, mouseY, 440, 246, 100, 39, '#ffb0c5'); // play button
     highlightButtons(mouseX, mouseY, 460, 286, 54, 17, '#ffb0c5'); // rules button
     highlightButtons(mouseX, mouseY, 460, 304, 53, 16, '#ffb0c5'); // about button
   }
 
   // number buttons (hightlight colour according to number)
   if (selectedScreen === 1) {
-    highlightButtons(mouseX, mouseY, 433, 64, 46, 47, '#ffb0c5');  // number 1, pink highlight
-    highlightButtons(mouseX, mouseY, 489, 64, 46, 47, '#8edd8b');  // number 2, green highlight
-    highlightButtons(mouseX, mouseY, 546, 64, 46, 47, '#9ff2f9');  // number 3, blue highlight
-    highlightButtons(mouseX, mouseY, 433, 120, 46, 47, '#bb94ff'); // number 4, purple highlight
-    highlightButtons(mouseX, mouseY, 489, 120, 46, 47, '#fffff5'); // number 5, beige highlight
-    highlightButtons(mouseX, mouseY, 546, 120, 46, 47, '#ffb850'); // number 6, orange highlight
+    highlightButtons(mouseX, mouseY, 433, 65, 46, 47, '#ffb0c5');  // number 1, pink highlight
+    highlightButtons(mouseX, mouseY, 489, 65, 46, 47, '#8edd8b');  // number 2, green highlight
+    highlightButtons(mouseX, mouseY, 545, 65, 46, 47, '#9ff2f9');  // number 3, blue highlight
+    highlightButtons(mouseX, mouseY, 433, 122, 46, 47, '#bb94ff'); // number 4, purple highlight
+    highlightButtons(mouseX, mouseY, 489, 122, 46, 47, '#fffff5'); // number 5, beige highlight
+    highlightButtons(mouseX, mouseY, 545, 122, 46, 47, '#ffb850'); // number 6, orange highlight
     highlightButtons(mouseX, mouseY, 433, 177, 46, 47, '#97ffc1'); // number 7, mint highlight
     highlightButtons(mouseX, mouseY, 489, 177, 46, 47, '#ffed7a'); // number 8, yellow highlight
-    highlightButtons(mouseX, mouseY, 546, 177, 46, 47, '#fd908e'); // number 9, yellow highlight
+    highlightButtons(mouseX, mouseY, 545, 177, 46, 47, '#fd908e'); // number 9, yellow highlight
   }
 
   // main screen buttons (hightlight pink)
   if (selectedScreen === 1) {
-    highlightButtons(mouseX, mouseY, 291, 23, 128, 30, '#ffb0c5'); //auto solve button
+    highlightButtons(mouseX, mouseY, 291, 22, 128, 30, '#ffb0c5'); //auto solve button
     highlightButtons(mouseX, mouseY, 556, 6, 77, 29, '#ffb0c5'); // erase button
     highlightButtons(mouseX, mouseY, 521, 4, 30, 34, '#ffb0c5'); // home button
-    highlightButtons(mouseX, mouseY, 439, 257, 151, 38, '#ffb0c5'); //load puzzle button
-    highlightButtons(mouseX, mouseY, 438, 303, 151, 36, '#ffb0c5'); //solve puzzle button
-    highlightButtons(mouseX, mouseY, 438, 350, 151, 36, '#ffb0c5'); //new puzzle button
+    highlightButtons(mouseX, mouseY, 437, 256, 154, 38, '#ffb0c5'); //load puzzle button
+    highlightButtons(mouseX, mouseY, 437, 305, 154, 38, '#ffb0c5'); //solve puzzle button
+    highlightButtons(mouseX, mouseY, 437, 355, 154, 38, '#ffb0c5'); //new puzzle button
   }
 
   // rules / about screen (highlight pink)
@@ -118,7 +125,7 @@ function mouseReleased() {
   // splash screen buttons
   if (selectedScreen === 0) {
     // play button
-    if (rectHitTest(mouseX, mouseY, 438, 248, 104, 37)) {
+    if (rectHitTest(mouseX, mouseY, 440, 246, 100, 39)) {
       selectedScreen = 1;
       displayGame = true;
     };
@@ -149,30 +156,30 @@ function mouseReleased() {
       gameReset();
     }
     // auto solve button
-    if (rectHitTest(mouseX, mouseY, 291, 23, 128, 30)) {
+    if (rectHitTest(mouseX, mouseY, 291, 22, 128, 30)) {
       revealPuzzle();
     }
 
     // number buttons
     // areas indicate a Sudoku number from menu
     // numbers clicked become the chosen number to place
-    if (rectHitTest(mouseX, mouseY, 437, 68, 42, 42)) {
+    if (rectHitTest(mouseX, mouseY, 433, 65, 46, 47)) {
       chosen = 1;
-    } else if (rectHitTest(mouseX, mouseY, 492, 68, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 489, 65, 46, 47)) {
       chosen = 2;
-    } else if (rectHitTest(mouseX, mouseY, 549, 68, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 545, 65, 46, 47)) {
       chosen = 3;
-    } else if (rectHitTest(mouseX, mouseY, 437, 126, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 433, 122, 46, 47)) {
       chosen = 4;
-    } else if (rectHitTest(mouseX, mouseY, 492, 126, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 489, 122, 46, 47)) {
       chosen = 5;
-    } else if (rectHitTest(mouseX, mouseY, 549, 126, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 545, 122, 46, 47)) {
       chosen = 6;
-    } else if (rectHitTest(mouseX, mouseY, 437, 182, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 433, 177, 46, 47)) {
       chosen = 7;
-    } else if (rectHitTest(mouseX, mouseY, 492, 182, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 489, 177, 46, 47)) {
       chosen = 8;
-    } else if (rectHitTest(mouseX, mouseY, 549, 182, 42, 42)) {
+    } else if (rectHitTest(mouseX, mouseY, 545, 177, 46, 47)) {
       chosen = 9;
     }
 
@@ -185,7 +192,7 @@ function mouseReleased() {
       board[chosenSquare.x][chosenSquare.y] = chosen;
     }
 
-  
+
   }
   // rule / about screen
   if (selectedScreen === 2 || selectedScreen === 3) {
@@ -223,6 +230,7 @@ function rectHitTest(px, py, x, y, w, h) {
 }
 
 // function that returns a new 9*9 array
+// fills in the array with null values
 function boardArray() {
   let newArray = [];
   for (let i = 0; i < 9; i++) {
@@ -234,8 +242,8 @@ function boardArray() {
   return newArray;
 }
 
-//copyBoard method that returns a copy of the Integer array passed as the argument
-//Avoids jumbled redirections to the same Integer array
+// copyBoard function that returns a copy of the Integer array passed as the argument
+// avoids jumbled redirections to the same Integer array
 function copyBoard(arr) {
   let arr2 = boardArray();
   for (let y = 0; y < 9; y++) {
@@ -246,9 +254,9 @@ function copyBoard(arr) {
   return arr2;
 }
 
-//compareBoard boolean method that compares both of the Integer arrays passed as the arguments
-//If the value at each coordinate is equal to one another, the method returns false
-//Otherwise, it returns true
+// compareBoard boolean function that compares both of the Integer arrays passed as the arguments
+// If the value at each coordinate is equal to one another, the function returns false
+// Otherwise, it returns true
 function compareBoard(arr1, arr2) {
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++)
@@ -260,9 +268,12 @@ function compareBoard(arr1, arr2) {
 }
 
 // Resets Puzzle
+// Alerts the player that there will be a new board set up
+// Might take a few moments to generate puzzle.
 function gameReset() {
   isSolved = true; // resets puzzle
   selectedScreen = 0;
+  alert("We are now generating a new sudoku board for you. This might take a few moments ^^");
   generateBoard();
   solved = copyBoard(board);
   generatePuzzle();
@@ -273,7 +284,7 @@ function gameReset() {
 //Reveals Puzzle
 function revealPuzzle() {
   try {
-    board = copyBoard(initial);
+    board = copyBoard(solved);
     fillBoard();
     alert("The auto solver has completed the puzzle.");
   }
@@ -283,24 +294,28 @@ function revealPuzzle() {
 }
 
 // draws the game
+// draws the numbers in their corresponding boxes
+// if the user fills in the wrong number, the numbers turn red
 function drawGame() {
-  for (let y = 0; y < 9; y++) {
-    for (let x = 0; x < 9; x++) {
-      if (board[x][y] != 0) {
-        textSize(20);
-        noStroke();
-        if(isNotSame(createVector(x,y))){
-          fill('red');
-        } else {
-          fill(0);
+  if (selectedScreen === 1) {
+    for (let y = 0; y < 9; y++) {
+      for (let x = 0; x < 9; x++) {
+        if (board[x][y] != 0) {
+          textSize(20);
+          noStroke();
+          if (isNotSame(createVector(x, y))) {
+            fill('red');
+          } else {
+            fill(0);
+          }
+          text(board[x][y] + "", x * 43 + 45, y * 43 + 93);
         }
-        text(board[x][y] + "", x * 43 + 45, y * 43 + 93);
       }
     }
   }
 }
 
-//placeNum method that takes x,y, coordinate in as argument
+//placeNum function that takes x,y, coordinate in as argument
 //And returns a CoordinatePair object
 function selectedSquare(x, y) {
 
@@ -332,7 +347,7 @@ function selectedSquare(x, y) {
   } else return null;//otherwise returns null
 }
 
-//Boolean editable method that takes in chosenSquare CoordinatePair object
+//Boolean editable function that takes in chosenSquare CoordinatePair object
 //as argument
 function editable(chosenSquare) {
 
@@ -340,7 +355,7 @@ function editable(chosenSquare) {
   return initial[chosenSquare.x][chosenSquare.y] === 0;
 }
 
-//Boolean isSame method that takes in chosenSquare CoordinatePair object
+//Boolean isSame function that takes in chosenSquare CoordinatePair object
 //as argument
 function isNotSame(chosenSquare) {
 
@@ -400,37 +415,22 @@ function isNotSame(chosenSquare) {
 //   }
 // }
 
-/**
-* Created by thomassmuir on 2019-02-18.
-*/
 
-
-//boolean generated variable for generateBoard method
-//If returns false, method cannot run
-let generated = false;
-
-let board = boardArray(); //board array that renders out on the console
-let initial = boardArray(); //initial array generation for later comparison and auto-solve
-let solved = boardArray(); //solved array of current board
-let loaded = boardArray(); //loaded array of user-loaded .sudoku file
-
-//generateBoard method
-//creates new board for solving by calling upon other methods
+//function that creates new board for solving by calling upon other function
 function generateBoard() {
   generated = false; //board can run
 
-  //for loop to initially fill board array with 0s
-  //Avoids nullPointerException errors
-  // board = boardArray();
+  // initially fills board array with 0s
+  // avoids null pointer errors
   for (let i = 0; i < 9; i++) {
     board[i].fill(0);
   }
 
-  //for loop that calls upon fillBoard() method to fill array with viable numbers
+  // calls upon fillBoard() function to fill array with viable numbers
   //Sets each coordinate to specified number from fillBoard();
   fillBoard();
 
-  //for loop that sets solved array to fully solved newly generated board array
+  // sets solved array to fully solved newly generated board array
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       solved[x][y] = board[x][y];
@@ -438,13 +438,11 @@ function generateBoard() {
   }
 }
 
-//generatePuzzle void method
-//Takes out random squares to create playable Sudoku board array
+// function that takes out random squares to create playable Sudoku board array
 function generatePuzzle() {
-  //print(board);
 
-  //for loop to choose 20 random squares from Sudoku array to turn into 0
-  //If board[x][y] == 0, Sudoku won't render the number to print out
+  // chooses 20 random squares from Sudoku array to turn into 0
+  // if board[x][y] == 0, Sudoku won't render the number to print out
   for (let i = 0; i < 20; i++) {
     let x1 = int(random(0, 1) * board.length);
     let y1 = int(random(0, 1) * board.length);
@@ -453,21 +451,20 @@ function generatePuzzle() {
       board[x1 - 1][y1] = 0;
     }
   }
-  //print(board);
 }
 
-// **RECURSIVE METHOD**
-// fillBoard array
-//fills board array with numbers for a solvable Sudoku
-
+// Recursive Function
+// fills board array with numbers for a solvable Sudoku
 function fillBoard() {
+  // finds the next square to be filled
   let newCell = findLowestCandidates();
 
-  //if statement to determine if board array can be solved or not
+  // if statement to determine if board array can be solved or not
   if (newCell === null) {
-    try { //if new cell is able to be called, try fillBoard() method
+    try { //if new cell is able to be called, try fillBoard() function
       fillBoard();
     }
+    // error handler
     catch (e) { //If not, it is an unsolvable board
       if (!generated) //If it's the first time the board is generated, try generating another board
         generateBoard();
@@ -477,38 +474,36 @@ function fillBoard() {
     return;
   }
 
-  //If there are no more new Cells, stop method
-  //Simplest case
+  // if there are no more new Cells, stop function
+  // simplest case
   if (newCell.x === -1) {
     return;
   }
 
-  //Creates a ListList of squares with the lowest number of candidates
-  //Candidates are the number of viable numbers for each square
+  // creates an array of squares with the lowest number of candidates
+  // candidates are the number of viable numbers for each square
   let candidates = countCandidates(newCell.x, newCell.y);
 
-  //Get another random square to check
+  // gets another random square to check
   board[newCell.x][newCell.y] = random(candidates);
 
-  //Recursively call method again
+  // recursively calls function again
   fillBoard();
 }
-//end of fillBoard method
 
 
-//findLowestCandidates method that returns CoordinatePair object (an x,y coordinate)
-//Find the squares with the lowest number of possible candidates
-//To later determine which next square is filled
+// findLowestCandidates function that returns vector object (an x,y coordinate)
+// finds the squares with the lowest number of possible candidates
+// to later determine which next square is filled
 function findLowestCandidates() {
-  //New LinkedList of CoordinatePairs that lists the squares with
-  //least number of candidates
+  // array that lists the squares with least number of candidates
   let finalCandidates = [];
 
-  //Create new array to count the number of possible candidates for each cell
+  // counts the number of possible candidates for each cell
   let candidates = boardArray();
 
-  //Fill array with the ints that countCandidates return
-  //If countCandidates has nothing in it, return null
+  // fills array with the ints that countCandidates return
+  // if countCandidates has nothing in it, return null
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (countCandidates(x, y) === null) {
@@ -517,16 +512,16 @@ function findLowestCandidates() {
       candidates[x][y] = countCandidates(x, y).length;
     }
   }
-  //Make the lowest comparable number 9
-  //Any square already filled is already listed as 10 in numbers
-  //Therefore, it won't be listed in the comparison
+  // make the lowest comparable number 9
+  // any square already filled is already array as 10 in numbers
+  // therefore, it won't be listed in the comparison
   let lowestNumber = 9;
 
-  //for loop to determine what squares to add and remove from the list
-  //If there is a square with less candidates than the squares in the list
-  //Remove those squares and add this square as well as squares of the same amount
-  //If there is a square with more candidates, don't add it
-  //If there is a square with the same number of candidates, add it to the list
+  // determines what squares to add and remove from the array
+  // if there is a square with less candidates than the squares in the array
+  // remove those squares and add this square as well as squares of the same amount
+  // if there is a square with more candidates, don't add it
+  // if there is a square with the same number of candidates, add it to the array
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (candidates[x][y] == lowestNumber) {
@@ -539,57 +534,56 @@ function findLowestCandidates() {
     }
   }
 
-  //If the size of the finalCandidates list is 0,
-  //Return -1, -1 which means the board is finished and fillBoard() can stop
+  // if the size of the finalCandidates array is 0,
+  // return -1, -1 which means the board is finished and fillBoard() can stop
   if (finalCandidates.length === 0) {
     return createVector(-1, -1);
   }
 
-  //Return a random square from the final candidates list
+  // return a random square from the final candidates array
   return random(finalCandidates);
 }
-//end of findLowestCandidates method
+//end of findLowestCandidates function
 
-//countCandidates method that returns LinkedList() of Integers
-//Each additional data point in list is the number of candidates for each each square
+// countCandidates function that returns array of ints
+// each additional data point in array is the number of candidates for each each square
 function countCandidates(x, y) {
 
-  //New LinkedList of Integers that lists the different possible number of candidates
-  //each square can have.
+  // new array that lists the different possible number of candidates each square can have.
   let numbers = [];
   for (let i = 9; i > 0; i--) {
     numbers.push(i);
   }
 
-  //If statement that determines if coordinate already has a number placed on board array,
-  //return 10 so that it won't be compared to later on in findLowestCandidates() method.
+  // determines if coordinate already has a number placed on board array,
+  // returns 10 so that it won't be compared to later on in findLowestCandidates() function
   if (board[x][y] !== 0) {
     numbers.push(10);
     return numbers;
   }
 
-  //for loop that determines what numbers the empty square can't be in its specific row
-  //Each number present in that row is removed from the list.
+  // for loop that determines what numbers the empty square can't be in its specific row
+  // each number present in that row is removed from the array.
   for (let row = 0; row < 9; row++) {
     if (numbers.includes(board[row][y])) {
       numbers.splice(numbers.indexOf(board[row][y]), 1);
     }
   }
 
-  //for loop that determines what numbers the empty square can't be in it's specific column
-  //Each number present in that column is removed from the list.
+  // for loop that determines what numbers the empty square can't be in its specific column
+  // each number present in that column is removed from the array.
   for (let column = 0; column < 9; column++) {
     if (numbers.includes(board[x][column])) {
       numbers.splice(numbers.indexOf(board[x][column]), 1);
     }
   }
 
-  //Int variables to determine offset of x,y coordinates
+  // variables to determine offset of x,y coordinates
   let offsetX = floor(x / 3) * 3;
   let offsetY = floor(y / 3) * 3;
 
-  //for loop that determines what numbers the empty square can't be in it's specific box
-  //Each number present in that box is removed from the list.
+  // determines what numbers the empty square can't be in it's specific box
+  // each number present in that box is removed from the array.
   for (let row = offsetX; row < offsetX + 3; row++) {
     for (let column = offsetY; column < offsetY + 3; column++) {
       if (numbers.includes(board[row][column])) {
@@ -598,13 +592,12 @@ function countCandidates(x, y) {
     }
   }
 
-  //If the size of the list is 0, return null
+  // if the size of the array is 0, return null
   if (numbers.length === 0) {
     return null;
   }
 
-  //Return the numbers LinkedList
+  // return the numbers array
   return numbers;
 
 }
-//end of countCandidates method
